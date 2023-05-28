@@ -1,7 +1,13 @@
+// Import required packages
 const express = require("express");
-const app = express();
-const PORT = 8080; // default port 8080
 
+// Set up Express app
+const app = express();
+
+// Define constants
+const PORT = 8080;
+
+// Set up view engine
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -9,12 +15,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
+
+// Define routes
 app.get("/", (req, res) => {
   res.send("Hello!");
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
 
 app.get("/urls.json", (req, res) => {
@@ -25,3 +30,7 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
