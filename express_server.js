@@ -13,10 +13,23 @@ app.use(express.urlencoded({ extended: true }));
 // Set up view engine
 app.set("view engine", "ejs");
 
+
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "abc123": "http://www.facebook.com"
 };
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.status(404).send("URL you are looking for does not exist");
+  }
+
+});
 
 
 function generateRandomString() {
