@@ -71,12 +71,20 @@ app.post("/urls", (req, res) => {
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
 
+//To delete a URL
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
 delete urlDatabase[id];
 res.redirect("/urls");
 });
 
+//To update a URL
+app.post("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  const newLongURL = req.body.longURL;
+  urlDatabase[id] = newLongURL;
+  res.redirect("/urls");
+});
 
 // Start the server
 app.listen(PORT, () => {
