@@ -1,5 +1,6 @@
 // Import required packages
 const express = require("express");
+const cookieParser = require("cookie-parser");
 
 // Set up Express app
 const app = express();
@@ -9,6 +10,7 @@ const PORT = 8080;
 
 // Using a middleware for parse requst body
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Set up view engine
 app.set("view engine", "ejs");
@@ -51,7 +53,11 @@ app.get("/hello", (req, res) => {
 
 //Adding url 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"],
+  };
+  console.log(templateVars,"Hello");
   res.render("urls_index", templateVars);
 });
 
@@ -91,6 +97,8 @@ app.post("/login", (req, res) => {
   res.cookie("username", username);
   res.redirect("/urls");
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {
