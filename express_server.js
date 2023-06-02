@@ -23,6 +23,19 @@ const urlDatabase = {
   "abc123": "http://www.facebook.com"
 };
 
+const users = {
+  abc: {
+    id: "abc",
+    email: "Julia@gmail.com",
+    password: "1234",
+  },
+  def: {
+    id: "def",
+    email: "Sam@gmail.com",
+    password: "5678",
+  },
+};
+
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   if (longURL) {
@@ -77,6 +90,42 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+
+app.post("/register", (req, res) => {
+const {email, password } =req.body
+
+if (!email || !password){
+  return res.status(400).send("Provide username & password.");
+
+}
+
+for (let userId in users){
+  if(users[userId].email === email ){
+    return res.status(400).send("Email already exist.");
+  }
+}
+
+const id =generateRandomString();
+users[id] ={
+  id: id,
+  email,
+  password,
+};
+console.log(users);
+
+res.cookie("user_id", id);
+return res.redirect("/urls");
+});
+
 //Adding new route (post)
 app.post("/urls", (req, res) => {
   console.log(req.body); 
@@ -103,6 +152,7 @@ app.post("/login", (req, res) => {
   res.cookie("username", username);
   res.redirect("/urls");
 });
+
 
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
