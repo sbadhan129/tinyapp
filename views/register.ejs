@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Registration</title>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-  <h1 style="color: white; background-color:green; padding: 20px;">User Registration</h1>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+    <title>Registration</title>
+  </head>
+<body>
+  <%- include('partials/_header') %>
+  <h1>User Registration</h1>
 
   <form method="POST" action="/register">
     <div>
       <label for="email">Email:</label>
-      <input placeholder="email" style="padding: 4px; border-radius: 10px; border:none" type="email" id="email" name="email" required>
+      <input type="email" id="email" name="email" required>
     </div>
     <div>
       <label for="password">Password:</label>
-      <input placeholder="Password" style="padding: 4px; border-radius: 10px; border:none" type= "password" id="password" name="password" required>
+      <input type= "password" id="password" name="password" required>
+      <button type="submit">Register</button>
     </div>
-    <button style="padding: 4px; color: white; background-color: aqua; border:none"" type="submit">Register</button>
+   
   </form>
 </body>
 </html>
