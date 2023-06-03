@@ -75,10 +75,14 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    user_id: req.cookies["user_id"]
-  };
-  res.render("urls_new", templateVars);
+  if (!req.cookies.user_id) {
+    res.redirect("/login");  //second part
+  } else {
+    const templateVars = {
+      user_id: req.cookies.user_id
+    };
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -92,20 +96,37 @@ app.get("/urls/:id", (req, res) => {
 
 
 app.get("/register", (req, res) => {
+  if (req.cookies.user_id) {               // fot the first part
+    res.redirect("/urls");
+  } else {
 const templateVars = {
   user_id: ""
 }
   res.render("register", templateVars);
-
+}
 });
 
 app.get("/login", (req, res) => {
+  if (req.cookies.user_id) {
+    res.redirect("/urls");
+  } else {
   const templateVars = {
     user_id: ""
   }
   res.render("login", templateVars);
+  }
 });
 
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+
+  if (!longURL) {
+    return res.status(404).send("The URL you are looking for does not exist.");
+  }
+
+  res.redirect(longURL);
+});
 
 app.post("/register", (req, res) => {
 const {email, password } =req.body
@@ -135,8 +156,19 @@ return res.redirect("/urls");
 
 //Adding new route (post)
 app.post("/urls", (req, res) => {
-  console.log(req.body); 
-  res.send("Ok"); 
+  if (!req.cookies.user_id) { // fourth part
+    return res.status(403).send("<p>Make sure to be loggen in</p>");
+  }
+
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+
+  urlDatabase[shortURL] = {
+    longURL: longURL,
+    userID: req.cookies.user_id
+  };
+
+  res.redirect("/urls");
 });
 
 //To delete a URL
