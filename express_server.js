@@ -15,12 +15,15 @@ app.use(cookieParser());
 // Set up view engine
 app.set("view engine", "ejs");
 
-
-
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "abc123": "http://www.facebook.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 const users = {
@@ -45,7 +48,6 @@ app.get("/u/:id", (req, res) => {
   }
 
 });
-
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
@@ -94,7 +96,6 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-
 app.get("/register", (req, res) => {
   if (req.cookies.user_id) {               // fot the first part
     res.redirect("/urls");
@@ -124,7 +125,6 @@ app.get("/u/:id", (req, res) => {
   if (!longURL) {
     return res.status(404).send("The URL you are looking for does not exist.");
   }
-
   res.redirect(longURL);
 });
 
@@ -135,7 +135,6 @@ if (!email || !password){
   return res.status(400).send("Provide username & password.");
 
 }
-
 for (let userId in users){
   if(users[userId].email === email ){
     return res.status(400).send("Email already exist.");
@@ -149,7 +148,6 @@ users[id] ={
   password,
 };
 console.log(users);
-
 res.cookie("user_id", id);
 return res.redirect("/urls");
 });
@@ -159,7 +157,6 @@ app.post("/urls", (req, res) => {
   if (!req.cookies.user_id) { // fourth part
     return res.status(403).send("<p>Make sure to be loggen in</p>");
   }
-
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
 
@@ -190,7 +187,6 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   const user = getUserByEmail(email);
-
   if (!user || user.password !== password) {
     return res.status(403).send("Invalid email or password.");
   }
@@ -198,13 +194,10 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
-
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect("/urls");
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {
