@@ -14,7 +14,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 A dynamic web application called TinyApp enables users to shorten lengthy URLs. The server-side code for this application is written in Node.js and Express.js, and the templating engine is EJS, employing full-stack JavaScript technologies. With cookie-based user authentication, user-specific data is managed safely while maintaining privacy and security.
 
 ## Final Product
-
+![Screenshot](./login.png)
 
 ## Features
 1. User Registeration & Login
