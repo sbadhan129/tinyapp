@@ -39,7 +39,7 @@ const users = {
   },
 };
 
-app.get("/u/:id", (req, res) => {
+/*app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   if (longURL) {
     res.redirect(longURL);
@@ -47,7 +47,7 @@ app.get("/u/:id", (req, res) => {
     res.status(404).send("URL you are looking for does not exist");
   }
 
-});
+});*/
 
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
@@ -68,32 +68,78 @@ app.get("/hello", (req, res) => {
 
 //Adding url 
 app.get("/urls", (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    user_id: req.cookies["user_id"],
-  };
-  console.log(templateVars,"Hello");
-  res.render("urls_index", templateVars);
+  const user_id = req.cookies.user_id;
+const userURLs = urlsForUser(user_id);
+  if (!user_id) {
+    // User is not logged in
+   // const templateVars = {
+     // error: "<p>Please Login or Register first.</p>", 
+      //user_id: ""
+    //};
+    res.redirect("login");
+  } else {
+    // User is logged in
+   // const userURLs = urlsForUser(user_id);
+   console.log(userURLs);
+    const templateVars = {
+      urls: userURLs,
+      user_id: user_id
+    };
+    res.render("urls_index", templateVars);
+  }
 });
+
 
 app.get("/urls/new", (req, res) => {
   if (!req.cookies.user_id) {
-    res.redirect("/login");  //second part
+    res.redirect("/login");  
   } else {
     const templateVars = {
-      user_id: req.cookies.user_id
+      user_id: req.cookies.user_id  //two
     };
     res.render("urls_new", templateVars);
   }
 });
 
+function urlsForUser(id) {
+  const userURLs = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userURLs;
+}
+
 app.get("/urls/:id", (req, res) => {
+  const user_id = req.cookies.user_id;
+  const shortURL = req.params.id;
+  const url = urlDatabase[shortURL];
+  
+  if (!user_id) {
+    // User is not logged in
+    const templateVars = {
+      error: "Please log in or register to view the URL.",
+      user_id: null
+    };
+    res.render("login", templateVars);
+  }
+  // URL does not exist 
+    else if(!url || url.userID !== user_id){
+      const templateVars = {
+        error: "URL not found or access denied.",
+        user_id: user
+      };
+      res.render("register", templateVars);
+    } else{
+        // User is logged in and have full access
   const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user_id: req.cookies["user_id"]
+    id: shortURL,
+    longURL: url.longURL, //four
+    user_id: user_id      //three
   };
   res.render("urls_show", templateVars);
+}
 });
 
 app.get("/register", (req, res) => {
@@ -110,17 +156,17 @@ const templateVars = {
 app.get("/login", (req, res) => {
   if (req.cookies.user_id) {
     res.redirect("/urls");
-  } else {
-  const templateVars = {
+    return
+  } 
+  const templateVars = { 
     user_id: ""
   }
   res.render("login", templateVars);
-  }
-});
+  });
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[req.params.id];
 
   if (!longURL) {
     return res.status(404).send("The URL you are looking for does not exist.");
@@ -170,16 +216,40 @@ app.post("/urls", (req, res) => {
 
 //To delete a URL
 app.post("/urls/:id/delete", (req, res) => {
-  const id = req.params.id;
-delete urlDatabase[id];
-res.redirect("/urls");
+  const user_id = req.cookies.user_id;
+  const url_id = req.params.id;
+  const url = urlDatabase[url_id];
+
+  if (!user_id) {
+    // User is not logged in
+    return res.status(403).send("To delete this URL you have to login or register.");
+  } else if (!url || url.userID !== user_id) {
+    // URL does not exist or does not belong to the user
+    return res.status(403).send("Not authorized to  this URL.");
+  }
+
+  // Delete the URL
+  delete urlDatabase[url_id];
+  res.redirect("/urls");
 });
+
 
 //To update a URL
 app.post("/urls/:id/edit", (req, res) => {
-  const id = req.params.id;
-  const newLongURL = req.body.longURL;
-  urlDatabase[id] = newLongURL;
+  const user_id = req.cookies.user_id;
+  const url_id = req.params.id;
+  const url = urlDatabase[url_id];
+
+  if (!user_id) {
+    // User is not logged in
+    return res.status(403).send("To edit this URL you have to login or register.");
+  } else if (!url || url.userID !== user_id) {
+    // URL does not exist or does not belong to the user
+    return res.status(403).send("Not authorized to edit this URL.");
+  }
+
+  // Update the URL
+  urlDatabase[url_id].longURL = req.body.longURL;
   res.redirect("/urls");
 });
 
