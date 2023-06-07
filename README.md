@@ -16,6 +16,10 @@ A dynamic web application called TinyApp enables users to shorten lengthy URLs. 
 ## Final Product
 ![Screenshot](./login.png)
 
+![Screenshot](./registeration.png)
+
+![Screenshot](./regi1.png)
+
 ## Features
 1. User Registeration & Login
 2. URL Shortening
