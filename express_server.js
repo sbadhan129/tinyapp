@@ -1,6 +1,7 @@
 // Import required packages
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
 
 // Set up Express app
 const app = express();
@@ -188,10 +189,11 @@ for (let userId in users){
 }
 
 const id =generateRandomString();
+const hashedPassword = bcrypt.hashSync(password, 10);
 users[id] ={
   id: id,
   email,
-  password,
+  password: hashedPassword,
 };
 console.log(users);
 res.cookie("user_id", id);
@@ -257,7 +259,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   const user = getUserByEmail(email);
-  if (!user || user.password !== password) {
+  if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Invalid email or password.");
   }
   res.cookie("user_id", user.id);
