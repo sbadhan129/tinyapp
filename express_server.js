@@ -50,7 +50,11 @@ function generateRandomString() {
 
 // Define routes
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id){
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/urls.json", (req, res) => {
@@ -114,11 +118,8 @@ app.get("/urls/:id", (req, res) => {
   }
   // URL does not exist 
     else if(!url || url.userID !== user_id){
-      const templateVars = {
-        error: "URL not found or access denied.",
-        user_id: user
-      };
-      res.render("register", templateVars);
+     
+      res.send("Url does not exist");
     } else{
         // User is logged in and have full access
   const templateVars = {
@@ -154,12 +155,12 @@ app.get("/login", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[req.params.id];
+  const urlObject = urlDatabase[req.params.id];
 
-  if (!longURL) {
-    return res.status(404).send("The URL you are looking for does not exist.");
+  if (!urlObject) {
+    return res.status(404).send("<p>The URL you are looking for does not exist.</p>");
   }
-  res.redirect(longURL);
+  res.redirect(`https://${urlObject.longURL}`) 
 });
 
 app.post("/register", (req, res) => {
